@@ -94,10 +94,10 @@ class NaverProvider extends AbstractProvider implements ProviderInterface
     protected function mapUserToObject(array $user)
     {
         return (new User())->setRaw($user)->map([
-            'id'       => $user['id'],
-            'nickname' => $user['nickname'],
-            'email'    => $user['email'],
-            'avatar'   => $user['profile_image'],
+            'id'       => $this->getUserData($user, 'id'),
+            'nickname' => $this->getUserData($user, 'nickname'),
+            'email'    => $this->getUserData($user, 'email'),
+            'avatar'   => $this->getUserData($user, 'profile_image'),
         ]);
     }
 
@@ -111,5 +111,16 @@ class NaverProvider extends AbstractProvider implements ProviderInterface
     private function parseXML($data)
     {
         return json_decode(json_encode(simplexml_load_string($data, null, LIBXML_NOCDATA)), true);
+    }
+
+    /**
+     * @param array $user
+     * @param string $key
+     *
+     * @return string|null
+     */
+    private function getUserData($user, $key)
+    {
+        return isset($user[$key]) ? $user[$key] : null;
     }
 }
